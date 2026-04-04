@@ -4,9 +4,11 @@
 [![GitHub Release](https://img.shields.io/github/v/release/alessiorubicini/Apple-Foundation-Models-Agent-Skill)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/alessiorubicini/Apple-Foundation-Models-Agent-Skill?style=flat)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/stargazers)
 
+> **Early version:** This skill is still in active development. It may lag behind the latest `FoundationModels` APIs, tools, or OS releases, and some material may be incomplete or incorrect. Treat it as guidance only. Verify behavior with [Apple’s Foundation Models documentation](https://developer.apple.com/documentation/foundationmodels) and your target SDK before you ship.
+
 Expert guidance for any AI coding assistant that supports the [Agent Skills open format](https://agentskills.io/home) — unlocking the power of Apple's on-device generative AI via the iOS 26+ and macOS 26+ `FoundationModels` framework.
 
-This repository provides your AI agent with actionable, deeply technical, and strictly correct references for building with `SystemLanguageModel`, ensuring best practices in Swift 6 concurrency, hardware performance, structured data extraction, and tool calling.
+This repository aims to give your AI agent actionable, deeply technical references for building with `SystemLanguageModel`, with best-practice patterns for Swift 6 concurrency, hardware performance, structured data extraction, and tool calling.
 
 ## Who this is for
 - Developers integrating Apple Intelligence into their native apps.
