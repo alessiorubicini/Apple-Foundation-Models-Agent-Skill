@@ -1,0 +1,23 @@
+{
+  "name": "apple-foundation-models",
+  "version": "1.0.0",
+  "description": "Expert Apple FoundationModels guidance: SystemLanguageModel, LanguageModelSession, Generable, Tool, adapters, streaming, and GenerationError handling for iOS 26+.",
+  "author": {
+    "name": "Apple Foundation Models Agent Skill contributors"
+  },
+  "repository": "https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill",
+  "license": "MIT",
+  "keywords": [
+    "swift",
+    "ios",
+    "apple",
+    "foundation-models",
+    "apple-intelligence",
+    "on-device-llm",
+    "generable",
+    "tool-calling"
+  ],
+  "skills": [
+    "./apple-foundation-models-skill"
+  ]
+}
