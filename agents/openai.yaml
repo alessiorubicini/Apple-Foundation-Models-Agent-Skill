@@ -1,0 +1,22 @@
+name: apple-foundation-models
+version: "1.0.0"
+description: >-
+  Expert Apple FoundationModels guidance for on-device LLM sessions,
+  guided generation, tool calling, adapters, streaming, and GenerationError
+  handling (iOS 26 / Swift 6+).
+author:
+  name: Apple Foundation Models Agent Skill contributors
+repository: https://github.com/example/Apple-Foundation-Models-Agent-Skill
+license: MIT
+logo: assets/logo.svg
+keywords:
+  - swift
+  - ios
+  - apple
+  - foundation-models
+  - apple-intelligence
+  - generable
+  - tool-calling
+  - language-model-session
+skills:
+  - apple-foundation-skill

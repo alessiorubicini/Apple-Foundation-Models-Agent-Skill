@@ -1,0 +1,37 @@
+{
+	"name": "apple-foundation-models-skill",
+	"version": "1.0.0",
+	"description": "Agent Skill for Apple Foundation Models framework — on-device AI with Swift on iOS 26+",
+	"skill": "apple-foundation-expert",
+	"skillFolder": "apple-foundation-skill",
+	"author": "Principal Apple Software Engineer",
+	"license": "MIT",
+	"keywords": [
+	  "apple",
+	  "foundation-models",
+	  "on-device-ai",
+	  "swift",
+	  "ios26",
+	  "xcode26",
+	  "llm",
+	  "agent-skill"
+	],
+	"requirements": {
+	  "ios": ">=26.0",
+	  "macos": ">=26.0",
+	  "xcode": ">=26.0",
+	  "swift": ">=6.0",
+	  "appleIntelligence": true
+	},
+	"repository": {
+	  "type": "git",
+	  "url": "https://github.com/YOUR_USERNAME/Apple-Foundation-Models-Agent-Skill"
+	},
+	"agentSkillFormat": "1.0",
+	"compatibleTools": [
+	  "claude-code",
+	  "cursor",
+	  "codex",
+	  "gemini-cli"
+	]
+  }
