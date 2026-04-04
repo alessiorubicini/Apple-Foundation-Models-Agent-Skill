@@ -6,7 +6,7 @@ description: >-
   handling (iOS 26 / Swift 6+).
 author:
   name: Apple Foundation Models Agent Skill contributors
-repository: https://github.com/example/Apple-Foundation-Models-Agent-Skill
+repository: https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill
 license: MIT
 logo: assets/logo.svg
 keywords:
@@ -19,4 +19,4 @@ keywords:
   - tool-calling
   - language-model-session
 skills:
-  - apple-foundation-skill
+  - apple-foundation-models-skill

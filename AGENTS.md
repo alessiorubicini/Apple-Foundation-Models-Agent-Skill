@@ -1,6 +1,6 @@
 # AGENTS.md — Foundation Models Skill: Agent Author Guide
 
-This document defines the content contract for the `apple-foundation-expert` skill.  
+This document defines the content contract for `apple-foundation-models-skill`.  
 Read this before contributing or modifying any reference file.
 
 ---
@@ -103,7 +103,7 @@ let response = try await session.respond(to: prompt) // called directly in View.
 
 ## Adding New Reference Files
 
-1. Place the file in `apple-foundation-skill/references/`.
+1. Place the file in `apple-foundation-models-skill/references/`.
 2. Add an entry to `references/_index.md` with a one-line description.
 3. Add a trigger condition in `SKILL.md` under **Reference Map**.
 4. All claims must cite an Apple documentation URL or WWDC session.  

@@ -1,8 +1,8 @@
 # Apple Foundation Models Skill
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![GitHub Release](https://img.shields.io/github/v/release/alessiorubicini/FoundationModels-Agent-Skill)](https://github.com/alessiorubicini/FoundationModels-Agent-Skill/releases)
-[![GitHub Stars](https://img.shields.io/github/stars/alessiorubicini/FoundationModels-Agent-Skill?style=flat)](https://github.com/alessiorubicini/FoundationModels-Agent-Skill/stargazers)
+[![GitHub Release](https://img.shields.io/github/v/release/alessiorubicini/Apple-Foundation-Models-Agent-Skill)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/alessiorubicini/Apple-Foundation-Models-Agent-Skill?style=flat)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/stargazers)
 
 Expert guidance for any AI coding assistant that supports the [Agent Skills open format](https://agentskills.io/home) — unlocking the power of Apple's on-device generative AI via the iOS 26+ and macOS 26+ `FoundationModels` framework.
 
@@ -20,7 +20,7 @@ This repository provides your AI agent with actionable, deeply technical, and st
 Install this skill with a single command via the Agent Skills CLI:
 
 ```bash
-npx skills add https://github.com/alessiorubicini/FoundationModels-Agent-Skill --skill apple-foundation-models-skill
+npx skills add https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill --skill apple-foundation-models-skill
 ```
 
 Then prompt your AI agent (e.g., Cursor, Claude, or Copilot):
@@ -32,7 +32,7 @@ To install this Skill for your personal use in Claude Code:
 
 1. Add the marketplace:
 ```bash
-/plugin marketplace add alessiorubicini/FoundationModels-Agent-Skill
+/plugin marketplace add alessiorubicini/Apple-Foundation-Models-Agent-Skill
 ```
 
 2. Install the Skill:
@@ -52,7 +52,7 @@ To automatically provide this Skill to everyone working in a repository, configu
     "apple-foundation-models-skill": {
       "source": {
         "source": "github",
-        "repo": "alessiorubicini/FoundationModels-Agent-Skill"
+        "repo": "alessiorubicini/Apple-Foundation-Models-Agent-Skill"
       }
     }
   }
@@ -93,7 +93,7 @@ apple-foundation-models-skill/
     concurrency.md            - Actor isolation, Sendable tools, and @MainActor rules
     error-handling.md         - Context overflow recovery and availability fallbacks
     generation-options.md     - Temperature, sampling (.greedy/.random), and token limits
-    glossary.md               - Canonical terminology for Apple's framework
+    glossary.md               - Canonical terminology for the framework
     guided-generation.md      - @Generable, @Guide, and DynamicGenerationSchema
     performance.md            - RAM footprint, token budgets, and prewarming techniques
     session-lifecycle.md      - Instructions, transcript arrays, and session instantiation
@@ -103,12 +103,9 @@ apple-foundation-models-skill/
 ```
 ## Contributing
 
-Contributions, fixes, and improvements are highly encouraged! This repository adheres strictly to the [Agent Skills open format](https://agentskills.io/home), which dictates specific structural constraints to remain machine-readable.
+Contributions, fixes, and improvements are highly encouraged! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide: the content contract in [AGENTS.md](AGENTS.md), which files to edit, the pull request checklist, and how to refresh documentation after new OS or Xcode releases.
 
-Please ensure any pull requests:
-- Keep explanations terse and rule-based (optimized for LLM consumption, not human tutorials).
-- Include explicit Swift 6 code examples.
-- Update `_index.md` if adding or renaming reference files.
+This repository adheres strictly to the [Agent Skills open format](https://agentskills.io/home), which dictates specific structural constraints to remain machine-readable.
 
 ## Acknowledgments
 
