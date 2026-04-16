@@ -84,6 +84,7 @@ This skill covers the entire surface area of the `FoundationModels` framework. B
 - **Error Handling & Fallbacks** — Proactive recovery strategies for `.exceededContextWindowSize` and unsupported locales.
 - **Concurrency** — Swift 6 invariants, `Sendable` conformance, and preventing data races in session transcripts.
 - **Performance** — Memory footprints, KV-cache behavior, and achieving sub-150ms latency using `prewarm()`.
+- **Prompting Techniques** — On-device prompt design: clarity, roles, few-shot examples, reasoning fields, and code-side branching.
 
 ## Skill Structure
 
@@ -98,6 +99,7 @@ apple-foundation-models-skill/
     glossary.md               - Canonical terminology for the framework
     guided-generation.md      - @Generable, @Guide, and DynamicGenerationSchema
     performance.md            - RAM footprint, token budgets, and prewarming techniques
+    prompting-techniques.md   - On-device prompt design, roles, few-shot examples, reasoning fields
     session-lifecycle.md      - Instructions, transcript arrays, and session instantiation
     streaming.md              - Async streams and PartiallyGenerated UI handling
     system-language-model.md  - Hardware checks, locales, and model adapters
