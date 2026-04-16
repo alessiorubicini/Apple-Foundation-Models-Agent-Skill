@@ -50,7 +50,9 @@ Consult the reference file for each topic relevant to the current task:
 | Context Overflow & Fallbacks | `references/error-handling.md` |
 | Actor Isolation & Sendable | `references/concurrency.md` |
 | Memory, Prewarming & Optimization | `references/performance.md` |
+| Prompt Design & Iteration | `references/prompting-techniques.md` |
 | Framework Terminology | `references/glossary.md` |
+| Prompting Techniques | `references/prompting-techniques.md` |
 
 ## Correctness Checklist
 
@@ -78,4 +80,5 @@ These are hard rules — violations will cause runtime crashes, deadlocks, or br
 - `references/error-handling.md` — Mandatory recovery strategies for context overflow and unsupported locales.
 - `references/concurrency.md` — Strict Swift 6 isolation invariants, `@MainActor` UI patterns, and cross-actor session usage.
 - `references/performance.md` — KV-cache limits, 4096-token budgets, 1.2 GB RAM footprint, and latency reduction via `prewarm()`.
+- `references/prompting-techniques.md` — On-device prompt design: clarity, roles, few-shot examples, reasoning fields, and code-side branching.
 - `references/glossary.md` — Canonical definitions for terms like "LoRA", "adapter", and "transcript".

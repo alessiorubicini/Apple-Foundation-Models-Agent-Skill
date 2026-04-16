@@ -13,4 +13,5 @@ Quick navigation for the agent. Load the specific file matching the current task
 | `error-handling.md` | `GenerationError` cases: `.exceededContextWindowSize`, `.unsupportedLanguageOrLocale`, recovery |
 | `concurrency.md` | `@MainActor`, `actor`, `Task`, `.task` modifier, isolation invariants |
 | `performance.md` | `prewarm()`, 4096-token budget, ~1.2 GB RAM, latency targets, Instruments |
+| `prompting-techniques.md` | On-device prompt design: clarity, roles, few-shot examples, reasoning fields, code-side branching |
 | `glossary.md` | Canonical definitions: token, transcript, adapter, guided generation, guardrails, LoRA |
