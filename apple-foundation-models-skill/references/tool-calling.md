@@ -33,7 +33,7 @@ public protocol Tool<Arguments, Output>: Sendable {
 * **`name`**: A unique string identifier for the model to reference (e.g., `"get_weather"`, `"searchContacts"`). Avoid spaces or punctuation.
 * **`description`**: A natural language sentence explaining exactly when and why the model should use this tool.
 * **`Arguments`**: A nested type that defines the parameters the model will pass to the tool. It must be a `struct` or `enum` marked with `@Generable`.
-* **`call(arguments:)`**: The actual asynchronous work. `Tool.call(arguments:)` is `async throws`. Propagate errors; never silence with `try?`.
+* **`call(arguments:)`**: The actual asynchronous work. `Tool.call(arguments:)` is `async throws`. Propagate errors; never silence failures.
 
 ---
 
@@ -124,4 +124,34 @@ final class ToolObserver: ToolExecutionDelegate, Sendable {
 * **Token Budget**: Limit the number of tools provided. All input to the model, including the schemas for `Tool` types, contributes to the combined input + output budget of 4 096 tokens.
 * **Prompt Integration**: If a tool is *always* required for a task, do not use Tool Calling. Instead, fetch the data yourself and inject it directly into the prompt before generating.
 * **Arguments Constraints**: Use `@Guide` on your `@Generable` properties to constrain output at the token level. Match the property type: `String` → `.regex` or `description:`, enum → `.anyOf(cases)`.
-* **Error Propagation**: Always propagate errors from `Tool.call`. The framework handles the failure gracefully, often allowing the model to inform the user it couldn't retrieve the data rather than crashing.
+* **Error Propagation**: Always propagate errors from `Tool.call`. The framework handles the failure gracefully, often allowing the model to inform the user it couldn't retrieve the data rather than crashing. Do not use optional-try to silence failures.
+
+---
+
+## WWDC 2026 Beta Updates
+
+WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+
+Sources:
+- https://developer.apple.com/documentation/foundationmodels/tool
+- https://developer.apple.com/documentation/foundationmodels/generationoptions
+- https://developer.apple.com/documentation/foundationmodels/languagemodelsession/sessionproperty
+
+- `Tool.SessionProperty` reads session-scoped values inside a tool.
+- `GenerationOptions.ToolCallingMode.allowed` lets the model decide whether to call tools.
+- `GenerationOptions.ToolCallingMode.required` requires a tool call when tools are available.
+- `GenerationOptions.ToolCallingMode.disallowed` suppresses tool calls for a request/profile.
+- `AnyTool` type-erases a tool in the beta SDK.
+
+```swift
+import FoundationModels
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+func requireToolUse() -> GenerationOptions {
+    GenerationOptions(
+        samplingMode: .greedy,
+        maximumResponseTokens: 120,
+        toolCallingMode: .required
+    )
+}
+```

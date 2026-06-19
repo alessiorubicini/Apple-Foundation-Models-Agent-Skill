@@ -53,7 +53,7 @@ struct MagicComposeView: View {
         }
         .task {
             // DO THIS: Prewarm during idle time when the view loads
-            try? await session.prewarm()
+            await session.prewarm()
         }
     }
     
@@ -76,3 +76,38 @@ If you exceed this limit, the framework throws `LanguageModelSession.GenerationE
 3.  **Use `includeSchemaInPrompt: false`**: If you must explain the structure manually within the instructions closure, set `includeSchemaInPrompt: false` when calling `respond` to prevent the framework from duplicating the schema overhead.
 4.  **Limit Tools**: Every `Tool` you provide adds its description and `Arguments` schema to the context window. Only inject tools that are strictly necessary for the current task.
 5.  **Restart Sessions Proactively**: If building a long-running chat UI, monitor the conversation length and proactively summarize the transcript to start a fresh `LanguageModelSession` before hitting the overflow error.
+
+---
+
+## WWDC 2026 Beta Updates
+
+WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+
+Sources:
+- https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel
+- https://developer.apple.com/documentation/foundationmodels/privatecloudcomputelanguagemodel
+- https://developer.apple.com/documentation/foundationmodels/languagemodelsession
+
+- Use `SystemLanguageModel.contextSize` and `try await PrivateCloudComputeLanguageModel.contextSize`; do not hardcode context size for beta APIs.
+- Use `SystemLanguageModel.tokenCount(for:)` to budget prompts, instructions, tools, schemas, and transcript entries before generation.
+- `LanguageModelSession.usage` and response/stream `usage` expose input, cached input, output, reasoning token counts, and metadata.
+- Private Cloud Compute may have a different context size from the on-device model.
+- For custom providers, send usage events through `LanguageModelExecutorGenerationChannel` when underlying token counters are available.
+
+```swift
+import FoundationModels
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, *)
+actor BudgetGate {
+    private let model = SystemLanguageModel.default
+
+    init?() {
+        guard case .available = model.availability else { return nil }
+    }
+
+    func canFit(prompt: Prompt, reservedOutputTokens: Int) async throws -> Bool {
+        let inputTokens = try await model.tokenCount(for: prompt)
+        return inputTokens + reservedOutputTokens <= model.contextSize
+    }
+}
+```

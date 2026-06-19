@@ -33,10 +33,11 @@ This layered approach keeps `SKILL.md` token-efficient (fast to load) while ensu
 
 ### This skill covers
 
-- All public API in the `FoundationModels` framework (iOS 26.0+)
+- All public API in the `FoundationModels` framework (iOS 26.0+ stable, iOS 27.0+ beta when explicitly marked)
+- Public WWDC 2026 beta surfaces: prompt attachments, dynamic profiles, session properties, Private Cloud Compute models, custom language model providers, reasoning/context options, and beta error handling
 - Concurrency patterns *specific to* `LanguageModelSession` and `Tool`
 - Integration with SwiftUI `@State`, `@Observable`, and `.task`
-- Error handling for `LanguageModelSession.GenerationError`
+- Error handling for `LanguageModelSession.GenerationError` and beta `LanguageModelError`
 - Performance patterns unique to on-device LLM inference
 
 ### This skill does NOT cover
@@ -44,7 +45,7 @@ This layered approach keeps `SKILL.md` token-efficient (fast to load) while ensu
 - General Swift Concurrency → use the [Swift Concurrency Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill)
 - General SwiftUI patterns → use the [SwiftUI Expert Skill](https://github.com/AvdLee/SwiftUI-Agent-Skill)
 - CoreML, Create ML, or Vision framework
-- Server-side / Private Cloud Compute (PCC) endpoints
+- Private Cloud Compute service internals, infrastructure, non-public endpoints, or server deployment
 - Third-party LLM SDKs (OpenAI, Anthropic, etc.)
 - LoRA adapter training (Python toolkit — not the Swift API)
 
@@ -56,16 +57,16 @@ These rules must be enforced in every code output:
 
 | # | Invariant |
 |---|---|
-| 1 | Always gate on `SystemLanguageModel.default.availability` before creating a session. |
+| 1 | Always gate `SystemLanguageModel.default.availability` or `PrivateCloudComputeLanguageModel().availability` before creating a session with that model. |
 | 2 | `LanguageModelSession` must be `@State` or actor-isolated — never a local `let` in a button action. |
-| 3 | Every `session.respond(to:)` / `session.streamResponse(to:)` call must be inside `do/catch` for `GenerationError`. |
-| 4 | Handle `.exceededContextWindowSize` explicitly — create a fresh session or truncate transcript. |
+| 3 | Every `session.respond(to:)` / `session.streamResponse(to:)` call must be inside `do/catch` for `LanguageModelSession.GenerationError` on stable APIs or `LanguageModelError` on iOS 27 beta APIs. |
+| 4 | Handle context overflow explicitly (`.exceededContextWindowSize` on stable APIs, `.contextSizeExceeded` on iOS 27 beta APIs) — create a fresh session or truncate transcript. |
 | 5 | `@Generable` types must be `struct` or `enum`. Classes are not supported. |
 | 6 | `@Guide` constraints must match the property's type (`String` → `.regex`, `Int` → `.count`, enum → `.anyOf`). |
 | 7 | `Tool.call(arguments:)` is `async throws` — always propagate errors; never `try?` silently. |
 | 8 | Never block the main actor — use `Task { }` or `.task { }` for all session calls. |
 | 9 | Call `session.prewarm()` during idle time (e.g., `onAppear`), not immediately before `respond`. |
-| 10 | Combined context (input + output) is capped at **4 096 tokens**. Design prompts and expected outputs accordingly. |
+| 10 | Stable on-device sessions use a **4 096-token** context budget; beta PCC/custom-model code must read `contextSize` dynamically instead of hardcoding this limit. |
 
 ---
 

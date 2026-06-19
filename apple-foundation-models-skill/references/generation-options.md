@@ -15,21 +15,28 @@ You can pass an optional `GenerationOptions` instance when calling `session.resp
 ```swift
 import FoundationModels
 
-// Gate on availability before session usage
-guard case .available = SystemLanguageModel.default.availability else { return }
+actor NameGenerator {
+    private let session: LanguageModelSession
 
-let session = LanguageModelSession() // Assume actor-isolated
+    init?() {
+        guard case .available = SystemLanguageModel.default.availability else { return nil }
+        session = LanguageModelSession()
+    }
 
-let options = GenerationOptions(
-    temperature: 0.7,
-    sampling: .random(probabilityThreshold: 0.9, seed: nil),
-    maximumResponseTokens: 250
-)
+    func names() async throws -> String {
+        let options = GenerationOptions(
+            samplingMode: .random(probabilityThreshold: 0.9, seed: nil),
+            temperature: 0.7,
+            maximumResponseTokens: 250
+        )
 
-let response = try await session.respond(
-    to: "Generate three names for a tech startup.",
-    options: options
-)
+        let response = try await session.respond(
+            to: "Generate three names for a tech startup.",
+            options: options
+        )
+        return response.content
+    }
+}
 ```
 
 ### Properties
@@ -57,3 +64,38 @@ The maximum number of tokens the model is allowed to produce in its response.
 
 * **Extraction vs. Creation**: When using the `.contentTagging` use-case adapter or strict `@Generable` types, prefer `.greedy` sampling to enforce structural constraints. For free-form text using the `.default` model, moderate temperatures allow for more natural phrasing.
 * **Context Preservation**: Always remember that the combined transcript size is capped at **4 096 tokens**. Limit `maximumResponseTokens` if you need to reserve space in the transcript for future multi-turn interactions.
+
+---
+
+## WWDC 2026 Beta Updates
+
+WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+
+Sources:
+- https://developer.apple.com/documentation/foundationmodels/generationoptions
+- https://developer.apple.com/documentation/foundationmodels/contextoptions
+
+- Use `samplingMode`; `sampling` is deprecated.
+- `GenerationOptions.ToolCallingMode` controls whether tool calls are `.allowed`, `.required`, or `.disallowed`.
+- `ContextOptions` controls prompt construction details outside token sampling.
+- `ContextOptions.ReasoningLevel` supports `.light`, `.moderate`, `.deep`, and `.custom(String)`.
+- For guided generation, prefer `ContextOptions(includeSchemaInPrompt:)` over older overloads that pass `includeSchemaInPrompt` directly.
+
+```swift
+import FoundationModels
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+func betaOptions() -> (GenerationOptions, ContextOptions) {
+    let generation = GenerationOptions(
+        samplingMode: .greedy,
+        temperature: 0.1,
+        maximumResponseTokens: 200,
+        toolCallingMode: .required
+    )
+    let context = ContextOptions(
+        includeSchemaInPrompt: true,
+        reasoningLevel: .light
+    )
+    return (generation, context)
+}
+```

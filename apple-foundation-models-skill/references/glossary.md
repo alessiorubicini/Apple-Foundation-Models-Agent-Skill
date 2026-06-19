@@ -16,3 +16,19 @@ Canonical terminology used across this skill. Prefer these definitions when writ
 | **Token** | Atomic unit of model context; prompts and completions consume tokens toward the session budget. |
 | **Tool** | A `Tool` protocol implementation the model can invoke for real-time or local data, with `@Generable` arguments and `async throws` execution. |
 | **Transcript** | See **Session transcript**. |
+
+## WWDC 2026 Beta Terms
+
+WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+
+| Term | Definition |
+|------|------------|
+| **ContextOptions** | Beta options that affect prompt construction, including schema inclusion and reasoning level. |
+| **Custom language model provider** | A `LanguageModel` plus `LanguageModelExecutor` implementation that lets a non-system model run through `LanguageModelSession`. |
+| **Dynamic instructions** | Instructions and tools expressed as `DynamicInstructions`, reevaluated from session state. |
+| **Dynamic profile** | A `LanguageModelSession.DynamicProfile` composition that can apply dynamic instructions, model settings, tool policy, history transforms, and lifecycle hooks. |
+| **Image reference** | A generated `ImageReference` that points back to a labeled prompt image and resolves through the session transcript. |
+| **PCC** | Private Cloud Compute; represented in FoundationModels by `PrivateCloudComputeLanguageModel`. |
+| **Reasoning level** | `ContextOptions.ReasoningLevel`; beta control for reasoning effort separate from response token sampling. |
+| **Session property** | Typed session-scoped state stored in `SessionPropertyValues` and read through `LanguageModelSession.SessionProperty`. |
+| **Tool calling mode** | `GenerationOptions.ToolCallingMode`; beta policy for allowed, required, or disallowed tool calls. |

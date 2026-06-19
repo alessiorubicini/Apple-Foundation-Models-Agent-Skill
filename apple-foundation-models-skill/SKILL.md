@@ -1,6 +1,6 @@
 ---
 name: apple-foundation-models-skill
-description: Write, review, or integrate Apple's on-device FoundationModels framework (iOS 26.0+, macOS 26.0+). Use when building generative AI features, structured data extraction, tool calling, or streaming text generation natively on Apple Silicon devices.
+description: Write, review, or integrate Apple's FoundationModels framework (iOS 26.0+, macOS 26.0+), including WWDC 2026 beta APIs. Use for on-device generation, structured output, tool calling, streaming, prompt attachments, dynamic profiles, session properties, Private Cloud Compute, or custom language model providers.
 ---
 
 # Apple Foundation Models Skill
@@ -14,6 +14,8 @@ description: Write, review, or integrate Apple's on-device FoundationModels fram
 - Prefer `@Generable` for structured output instead of asking the model to write raw JSON.
 - Never use the model for real-time data retrieval without injecting `Tool` capabilities, and avoid using it for complex mathematical reasoning or authoritative world-knowledge.
 - Focus on hardware performance: use `prewarm()` intelligently during idle time to minimize first-token latency.
+- Treat WWDC 2026 beta APIs as provisional: verify against Apple documentation before use, add platform availability guards, and load `references/wwdc-2026-beta-apis.md` before beta-specific files.
+- Load references progressively: start with `references/_index.md`, then load only the topic files needed for the request. For beta work, load the beta API map first and then the single beta reference that matches the task.
 
 ## Task Workflow
 
@@ -22,7 +24,7 @@ description: Write, review, or integrate Apple's on-device FoundationModels fram
 - Flag any missing availability checks before `LanguageModelSession` instantiation.
 - Validate that `.exceededContextWindowSize` is explicitly caught and handled.
 - Ensure `LanguageModelSession` is not declared locally inside a function or `Task` (which breaks statefulness).
-- Check `Tool` implementations to ensure errors are propagated (`throws`) and not silenced with `try?`.
+- Check `Tool` implementations to ensure errors are propagated (`throws`) and not silenced with optional-try.
 
 ### Implement new Foundation Models feature
 - Determine the correct model adapter: `.default` for conversational prose, `.contentTagging` for classification/extraction.
@@ -51,8 +53,13 @@ Consult the reference file for each topic relevant to the current task:
 | Actor Isolation & Sendable | `references/concurrency.md` |
 | Memory, Prewarming & Optimization | `references/performance.md` |
 | Prompt Design & Iteration | `references/prompting-techniques.md` |
+| WWDC 2026 Beta API Map | `references/wwdc-2026-beta-apis.md` |
+| Prompt Attachments & Image References | `references/prompt-attachments.md` |
+| Dynamic Instructions & Profiles | `references/dynamic-profiles.md` |
+| Session Properties | `references/session-properties.md` |
+| Private Cloud Compute Model | `references/private-cloud-compute.md` |
+| Custom Language Model Providers | `references/custom-language-model-provider.md` |
 | Framework Terminology | `references/glossary.md` |
-| Prompting Techniques | `references/prompting-techniques.md` |
 
 ## Correctness Checklist
 
@@ -63,22 +70,7 @@ These are hard rules — violations will cause runtime crashes, deadlocks, or br
 - [ ] `LanguageModelSession.GenerationError.exceededContextWindowSize` is explicitly caught in all `do/catch` blocks interacting with the session.
 - [ ] A session is **never** reused after throwing an `.exceededContextWindowSize` error (a fresh instance must be created).
 - [ ] `prewarm()` is called during idle time (e.g., view `.task`), never immediately preceding a `respond(to:)` call.
-- [ ] Errors inside `Tool.call(arguments:)` are explicitly thrown and never silenced with `try?`.
+- [ ] Errors inside `Tool.call(arguments:)` are explicitly thrown and never silenced with optional-try.
 - [ ] Instructions strings are strictly hardcoded or developer-controlled, never built directly from user input.
 - [ ] `@Generable` properties are ordered logically top-to-bottom, with summary/dependent properties placed last.
 - [ ] `PartiallyGenerated` types are never instantiated manually, only consumed from `streamResponse`.
-
-## References
-
-- `references/_index.md` — **Read first for quick navigation.** Index of all documentation.
-- `references/system-language-model.md` — Availability states, adapter types (`.default`, `.contentTagging`), and hardware requirements.
-- `references/session-lifecycle.md` — Initialization, system instructions, transcript management, and statefulness.
-- `references/guided-generation.md` — `@Generable` macros, `@Guide` token constraints, and dynamic schema building.
-- `references/tool-calling.md` — `Tool` protocol design, `Sendable` conformance, and `ToolExecutionDelegate`.
-- `references/generation-options.md` — Temperature tuning, `.greedy` vs `.random` sampling, and response token capping.
-- `references/streaming.md` — `streamResponse(to:)` logic, `PartiallyGenerated` handling for SwiftUI incremental updates.
-- `references/error-handling.md` — Mandatory recovery strategies for context overflow and unsupported locales.
-- `references/concurrency.md` — Strict Swift 6 isolation invariants, `@MainActor` UI patterns, and cross-actor session usage.
-- `references/performance.md` — KV-cache limits, 4096-token budgets, 1.2 GB RAM footprint, and latency reduction via `prewarm()`.
-- `references/prompting-techniques.md` — On-device prompt design: clarity, roles, few-shot examples, reasoning fields, and code-side branching.
-- `references/glossary.md` — Canonical definitions for terms like "LoRA", "adapter", and "transcript".

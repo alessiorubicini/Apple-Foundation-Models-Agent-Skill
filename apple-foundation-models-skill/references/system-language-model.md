@@ -92,3 +92,39 @@ Apple explicitly warns against these use cases:
 - Complex mathematical reasoning
 - Authoritative world-knowledge retrieval (model is not a web search)
 - Real-time data (use `Tool` calling to inject live data)
+
+---
+
+## WWDC 2026 Beta Updates
+
+WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+
+Sources:
+- https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel
+- https://developer.apple.com/documentation/foundationmodels/languagemodel
+- https://developer.apple.com/documentation/foundationmodels/languagemodelcapabilities
+
+- Prefer `SystemLanguageModel(useCase:guardrails:)`; `SystemLanguageModel.Adapter` is deprecated in iOS 26.4 and obsoleted in iOS 27.
+- `SystemLanguageModel.Guardrails` exposes `.default` and `.permissiveContentTransformations`.
+- `contextSize` is public; use it instead of hardcoding `4096`.
+- `tokenCount(for:)` is available for prompts, instructions, tools, schemas, and transcript entries on iOS 26.4+.
+- In iOS 27 beta, `SystemLanguageModel` conforms to `LanguageModel` and exposes `capabilities` plus `executorConfiguration`.
+- `SystemLanguageModel.Error.assetsUnavailable(_:)` replaces the deprecated `LanguageModelSession.GenerationError.assetsUnavailable`.
+
+```swift
+import FoundationModels
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, *)
+actor TokenBudgetChecker {
+    private let model = SystemLanguageModel.default
+
+    init?() {
+        guard case .available = model.availability else { return nil }
+    }
+
+    func accepts(_ prompt: Prompt) async throws -> Bool {
+        let tokens = try await model.tokenCount(for: prompt)
+        return tokens < model.contextSize
+    }
+}
+```

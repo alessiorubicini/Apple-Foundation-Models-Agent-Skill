@@ -100,7 +100,7 @@ guard supported.contains(Locale.current.language) else {
 
 If your session is configured with `Tool` instances, the `Tool.call(arguments:)` method might throw an error (e.g., network failure when fetching weather).
 
-**The Invariant**: `Tool.call(arguments:)` is `async throws`. You must propagate errors out of this function; never silence them with `try?`. 
+**The Invariant**: `Tool.call(arguments:)` is `async throws`. You must propagate errors out of this function; never silence them with optional-try.
 
 When a tool throws, the `FoundationModels` framework catches it, injects the error context back into the LLM, and often allows the model to gracefully inform the user ("I'm sorry, I couldn't reach the weather service right now") rather than crashing the application.
 
@@ -109,11 +109,57 @@ struct NetworkDataTool: Tool {
     // ...
     func call(arguments: Args) async throws -> String {
         // DO NOT do this:
-        // let data = try? await fetch(arguments.query) // BAD: Silences error
+        // BAD: Silencing errors here would hide tool failures from the model.
         
         // DO this:
         let data = try await fetch(arguments.query) // Propagates error up
         return data
+    }
+}
+```
+
+---
+
+## WWDC 2026 Beta Updates
+
+WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+
+Sources:
+- https://developer.apple.com/documentation/foundationmodels/languagemodelerror
+- https://developer.apple.com/documentation/foundationmodels/transcripterrorhandlingpolicy
+- https://developer.apple.com/documentation/foundationmodels/privatecloudcomputelanguagemodel/error
+
+- `LanguageModelError` is the iOS 27 beta error model for generation failures.
+- `LanguageModelSession.GenerationError` is deprecated in iOS 27; keep it only in iOS 26 compatibility examples.
+- `TranscriptErrorHandlingPolicy.revertTranscript` reverts transcript mutations from the most recent failed request.
+- `TranscriptErrorHandlingPolicy.preserveTranscript` keeps the transcript unchanged by the framework after errors.
+- PCC adds `PrivateCloudComputeLanguageModel.Error.networkFailure`, `.quotaLimitReached`, and `.serviceUnavailable`.
+
+```swift
+import FoundationModels
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+func mapGenerationError(_ error: any Error) -> String {
+    switch error {
+    case LanguageModelError.contextSizeExceeded(let context):
+        return "Context \(context.tokenCount) exceeds limit \(context.contextSize)."
+    case LanguageModelError.rateLimited(let context):
+        return "Rate limited until \(String(describing: context.resetDate))."
+    case LanguageModelError.refusal:
+        return "The model refused this request."
+    case LanguageModelError.guardrailViolation:
+        return "The request or response triggered safety guardrails."
+    case LanguageModelError.unsupportedCapability:
+        return "The selected model does not support the requested capability."
+    case PrivateCloudComputeLanguageModel.Error.quotaLimitReached(let context):
+        context.limitIncreaseSuggestion?.show()
+        return "Private Cloud Compute quota reached."
+    case PrivateCloudComputeLanguageModel.Error.networkFailure:
+        return "Private Cloud Compute network failure."
+    case PrivateCloudComputeLanguageModel.Error.serviceUnavailable:
+        return "Private Cloud Compute service unavailable."
+    default:
+        return error.localizedDescription
     }
 }
 ```
