@@ -4,11 +4,13 @@
 [![GitHub Release](https://img.shields.io/github/v/release/alessiorubicini/Apple-Foundation-Models-Agent-Skill)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/alessiorubicini/Apple-Foundation-Models-Agent-Skill?style=flat)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/stargazers)
 
-> **Early version:** This skill is still in active development. It may lag behind the latest `FoundationModels` APIs, tools, or OS releases, and some material may be incomplete or incorrect. Treat it as guidance only. Verify behavior with [Apple’s Foundation Models documentation](https://developer.apple.com/documentation/foundationmodels) and your target SDK before you ship.
+**Current version:** 2.0.0
 
-Expert guidance for any AI coding assistant that supports the [Agent Skills open format](https://agentskills.io/home) — unlocking the power of Apple's on-device generative AI via the iOS 26+ and macOS 26+ `FoundationModels` framework.
+> **Beta warning:** Stable guidance targets the iOS 26+ and macOS 26+ `FoundationModels` framework. WWDC26 additions are beta-only and require Xcode 27 beta plus iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless explicitly noted. Treat beta APIs as provisional, guard generated Swift with `@available` or `#available`, and verify behavior with [Apple's Foundation Models documentation](https://developer.apple.com/documentation/foundationmodels) and your target SDK before shipping.
 
-This repository aims to give your AI agent actionable, deeply technical references for building with `SystemLanguageModel`, with best-practice patterns for Swift 6 concurrency, hardware performance, structured data extraction, and tool calling.
+Expert guidance for any AI coding assistant that supports the [Agent Skills open format](https://agentskills.io/home), unlocking the power of Apple's generative AI through the `FoundationModels` framework, including stable OS 26 APIs and WWDC26 OS 27 beta APIs.
+
+This repository aims to give your AI agent actionable, deeply technical references for building with `SystemLanguageModel`, `PrivateCloudComputeLanguageModel`, dynamic profiles, prompt attachments, session properties, structured generation, streaming, and tool calling.
 
 ## Who this is for
 - Developers integrating Apple Intelligence into their native apps.
@@ -85,6 +87,7 @@ This skill covers the entire surface area of the `FoundationModels` framework. B
 - **Concurrency** — Swift 6 invariants, `Sendable` conformance, and preventing data races in session transcripts.
 - **Performance** — Memory footprints, KV-cache behavior, and achieving sub-150ms latency using `prewarm()`.
 - **Prompting Techniques** — On-device prompt design: clarity, roles, few-shot examples, reasoning fields, and code-side branching.
+- **WWDC26 / OS 27 Beta APIs** — Prompt attachments, Vision image-analysis tools, dynamic profiles, session properties, Private Cloud Compute, custom language model providers, metadata/context options, and beta error handling.
 
 ## Skill Structure
 
@@ -94,16 +97,22 @@ apple-foundation-models-skill/
   references/
     _index.md                 - Quick navigation and file routing for the agent
     concurrency.md            - Actor isolation, Sendable tools, and @MainActor rules
+    custom-language-model-provider.md - WWDC26 beta custom LanguageModel providers
+    dynamic-profiles.md       - WWDC26 beta profiles, lifecycle hooks, and agentic patterns
     error-handling.md         - Context overflow recovery and availability fallbacks
     generation-options.md     - Temperature, sampling (.greedy/.random), and token limits
     glossary.md               - Canonical terminology for the framework
     guided-generation.md      - @Generable, @Guide, and DynamicGenerationSchema
     performance.md            - RAM footprint, token budgets, and prewarming techniques
     prompting-techniques.md   - On-device prompt design, roles, few-shot examples, reasoning fields
+    private-cloud-compute.md  - WWDC26 beta PrivateCloudComputeLanguageModel guidance
+    prompt-attachments.md     - WWDC26 beta image attachments and ImageReference
     session-lifecycle.md      - Instructions, transcript arrays, and session instantiation
+    session-properties.md     - WWDC26 beta session-scoped state
     streaming.md              - Async streams and PartiallyGenerated UI handling
     system-language-model.md  - Hardware checks, locales, and model adapters
     tool-calling.md           - The Tool protocol, arguments, and execution delegates
+    wwdc-2026-beta-apis.md    - WWDC26 beta routing map and source matrix
 ```
 ## Contributing
 
@@ -111,11 +120,11 @@ Contributions, fixes, and improvements are highly encouraged! See **[CONTRIBUTIN
 
 This repository adheres strictly to the [Agent Skills open format](https://agentskills.io/home), which dictates specific structural constraints to remain machine-readable.
 
-## Acknowledgments
+## Acknowledgments & Legal Disclaimer
 
-The technical guidelines encoded in this skill are derived entirely from Apple's official WWDC25 documentation and sessions, specifically:
-- *Meet the Foundation Models framework*
-- *Deep Dive into the Foundation Models Framework*
+This is an independent community-driven project and is not affiliated with, sponsored by, authorized by, or otherwise endorsed by Apple Inc. The technical guidelines, examples, and documentation templates encoded in this skill are compiled for informational and educational purposes only, derived from publicly available resources, official WWDC sessions, and Apple documentation.
+
+Apple, Apple Intelligence, iOS, macOS, iPadOS, watchOS, tvOS, visionOS, Xcode, Swift, and Swift Playgrounds are trademarks of Apple Inc., registered in the U.S. and other countries. All other trademarks, service marks, product names, and company names or logos mentioned herein are the property of their respective owners.
 
 ## License
 
