@@ -1,6 +1,6 @@
 # Dynamic Profiles — WWDC 2026 Beta
 
-WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+WWDC 2026 Beta: APIs require Xcode 27 beta and iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Always guard usage with `@available` or `#available` and verify against current Apple documentation before shipping.
 
 Sources:
 - https://developer.apple.com/documentation/foundationmodels/dynamicinstructions
@@ -8,6 +8,7 @@ Sources:
 - https://developer.apple.com/documentation/foundationmodels/languagemodelsession/dynamicprofilemodifier
 - https://developer.apple.com/documentation/foundationmodels/languagemodelsession/profile
 - https://developer.apple.com/documentation/foundationmodels/languagemodelsession
+- Apple WWDC 2026 session: Build agentic app experiences with the Foundation Models framework
 
 ## API Surface
 
@@ -18,6 +19,7 @@ Sources:
 - `LanguageModelSession.DynamicProfileModifier` creates reusable wrappers for profile content.
 - `LanguageModelSession(profile:history:)` creates a session from a dynamic profile.
 - `LanguageModelSession(model:dynamicInstructions:history:)` creates a session from a model and dynamic instructions.
+- `DynamicProfile.body` is re-evaluated before each prompt; profile state changes can switch active instructions, tools, model, and options without rebuilding the session.
 
 ## Profile Modifiers
 
@@ -40,53 +42,91 @@ Use profile modifiers to adjust invocation behavior without rebuilding the whole
 
 `inputFilter(_:)` exists in the beta SDK but is deprecated in favor of `historyTransform(_:)`.
 
-## Example
+## Agentic Patterns
+
+- Baton-pass: profiles share one transcript; a tool changes the active profile state, and the receiving profile completes the final response.
+- Phone-a-friend: a tool creates a short-lived `LanguageModelSession` with its own profile and isolated transcript, returns its result as tool output, and the parent profile gives the final response.
+- FoundationModelsUtilities is an optional open-source package for reusable dynamic-profile components such as history-window modifiers, completed-tool-call dropping, and procedural `Skills` dynamic instructions. Verify package API before emitting code.
+
+## Transcript Management
+
+- Prefer `historyTransform(_:)` for per-profile trimming or redaction; it is a lossless pre-prompt view and does not permanently mutate `session.transcript`.
+- Use `@SessionProperty(\.history)` only when intentionally mutating history for every profile in the session, such as after-response summarization.
+
+## Example: Three Profiles in One Session
 
 ```swift
 import FoundationModels
 
 @available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
-extension SessionPropertyValues {
-    @SessionPropertyEntry
-    var customerTier: String = "standard"
+enum CraftMode: String, Sendable {
+    case brainstorm
+    case plan
+    case review
 }
 
 @available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
-struct SupportProfile: LanguageModelSession.DynamicProfile {
-    @SessionProperty(\.customerTier) private var customerTier
+extension SessionPropertyValues {
+    @SessionPropertyEntry
+    var craftMode: CraftMode = .brainstorm
+}
+
+@Generable
+struct EmptyToolArguments {}
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+struct SwitchCraftModeTool: Tool {
+    let target: CraftMode
+    var name: String { "switch_to_\(target.rawValue)" }
+    var description: String { "Switches the craft assistant to \(target.rawValue) mode." }
+    @SessionProperty(\.craftMode) private var craftMode
+
+    func call(arguments: EmptyToolArguments) async throws -> String {
+        craftMode = target
+        return "Mode switched to \(target.rawValue)."
+    }
+}
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+struct CraftProfile: LanguageModelSession.DynamicProfile {
+    @SessionProperty(\.craftMode) private var mode
+    private let pccModel = PrivateCloudComputeLanguageModel()
+    private let systemModel = SystemLanguageModel.default
 
     var body: some LanguageModelSession.DynamicProfile {
-        LanguageModelSession.Profile {
-            Instructions("Answer as a concise support assistant for a \(customerTier) customer.")
-        }
-        .temperature(0.2)
-        .reasoningLevel(.light)
-        .transcriptErrorHandlingPolicy(.revertTranscript)
-        .onPrompt {
-            // Hook point for analytics or UI state; never block here.
+        switch mode {
+        case .brainstorm:
+            LanguageModelSession.Profile {
+                Instructions("Generate a short list of craft project ideas.")
+                SwitchCraftModeTool(target: .plan)
+            }
+            .model(pccModel)
+            .temperature(1.0)
+        case .plan:
+            LanguageModelSession.Profile {
+                Instructions("Write step-by-step directions for the selected project.")
+                SwitchCraftModeTool(target: .review)
+            }
+            .model(pccModel)
+            .reasoningLevel(.deep)
+        case .review:
+            LanguageModelSession.Profile {
+                Instructions("Give concise technique feedback for in-progress photos.")
+                SwitchCraftModeTool(target: .brainstorm)
+            }
+            .model(systemModel)
+            .historyTransform { Array($0.suffix(12)) }
         }
     }
 }
 
 @available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
-actor SupportAgent {
+actor CraftAgent {
     private let session: LanguageModelSession
 
     init?() {
         guard case .available = SystemLanguageModel.default.availability else { return nil }
-        session = LanguageModelSession(profile: SupportProfile())
-        session.properties.customerTier = "enterprise"
-    }
-
-    func answer(_ text: String) async throws -> String {
-        do {
-            let response = try await session.respond(to: Prompt(text))
-            return response.content
-        } catch LanguageModelError.contextSizeExceeded {
-            throw LanguageModelError.contextSizeExceeded(
-                .init(contextSize: 0, tokenCount: 0, debugDescription: "Start a fresh session before retrying.")
-            )
-        }
+        session = LanguageModelSession(profile: CraftProfile())
     }
 }
 ```

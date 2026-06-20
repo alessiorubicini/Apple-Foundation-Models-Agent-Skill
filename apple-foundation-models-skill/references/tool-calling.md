@@ -13,20 +13,7 @@ When the model decides a tool is needed, the `LanguageModelSession` automaticall
 
 ## The `Tool` Protocol
 
-To create a tool, define a type that conforms to the `Tool` protocol. The framework enforces strict concurrency, so the protocol requires `Sendable` conformance.
-
-```swift
-public protocol Tool<Arguments, Output>: Sendable {
-    var name: String { get }
-    var description: String { get }
-    var includesSchemaInInstructions: Bool { get } // Default provided
-
-    associatedtype Arguments: ConvertibleFromGeneratedContent
-    associatedtype Output: PromptRepresentable
-
-    func call(arguments: Arguments) async throws -> Output
-}
-```
+To create a tool, define a `Sendable` type conforming to `Tool` with `name`, `description`, `Arguments`, `Output`, and `call(arguments:)`.
 
 ### Key Requirements
 
@@ -71,51 +58,13 @@ struct WeatherTool: Tool {
 
 ## Providing Tools to a Session
 
-Tools are injected when initializing the `LanguageModelSession`. The model decides when to invoke tools. 
-
-```swift
-@MainActor
-@Observable final class WeatherViewModel {
-    // Session ownership must be @State or an actor-isolated property
-    private let session = LanguageModelSession(
-        tools: [WeatherTool()]
-    ) {
-        "You are a helpful assistant. Use tools when the user asks for real-time information."
-    }
-
-    func askWeather(for city: String) async {
-        do {
-            // Every session.respond call lives in do/catch
-            let response = try await session.respond(to: "What's the weather in \(city)?")
-            print(response.content)
-        } catch {
-            // Surface error to UI
-        }
-    }
-}
-```
+Tools are injected when initializing `LanguageModelSession` or through `DynamicInstructions` / `Profile` builders. The model decides when to invoke tools unless beta `toolCallingMode` overrides that behavior.
 
 ---
 
 ## Observing Execution: `ToolExecutionDelegate`
 
-You can observe when the model executes a tool call by assigning a `ToolExecutionDelegate` to the session. This is incredibly useful for updating your UI state (e.g., showing a "Fetching data..." indicator).
-
-```swift
-final class ToolObserver: ToolExecutionDelegate, Sendable {
-    func didExecuteToolCall(
-        _ toolCall: Transcript.ToolCall,
-        output: Transcript.ToolOutput,
-        in session: LanguageModelSession
-    ) async {
-        print("Model invoked tool: \(toolCall.name)")
-        // Dispatch UI updates if needed
-    }
-}
-
-// Usage:
-// session.toolExecutionDelegate = ToolObserver()
-```
+Assign a `ToolExecutionDelegate` when UI needs progress state for tool execution. Keep delegate work short and actor-safe.
 
 ---
 
@@ -130,28 +79,81 @@ final class ToolObserver: ToolExecutionDelegate, Sendable {
 
 ## WWDC 2026 Beta Updates
 
-WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+WWDC 2026 Beta: APIs require Xcode 27 beta and iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Always guard usage with `@available` or `#available` and verify against current Apple documentation before shipping.
 
 Sources:
 - https://developer.apple.com/documentation/foundationmodels/tool
 - https://developer.apple.com/documentation/foundationmodels/generationoptions
 - https://developer.apple.com/documentation/foundationmodels/languagemodelsession/sessionproperty
+- Apple WWDC 2026 session: Build agentic app experiences with the Foundation Models framework
 
 - `Tool.SessionProperty` reads session-scoped values inside a tool.
 - `GenerationOptions.ToolCallingMode.allowed` lets the model decide whether to call tools.
 - `GenerationOptions.ToolCallingMode.required` requires a tool call when tools are available.
 - `GenerationOptions.ToolCallingMode.disallowed` suppresses tool calls for a request/profile.
 - `AnyTool` type-erases a tool in the beta SDK.
+- When tool calling is `.required`, the model can remain in a tool-call loop; provide an exit condition such as a profile-state switch, conditional tool-calling mode, or a final-answer tool that deliberately aborts control flow.
+
+## Agentic Orchestration
+
+- Baton-pass: use a tool call to switch active profile state inside one session; full transcript remains visible, and the new profile produces the final answer.
+- Phone-a-friend: use a tool to create a short-lived child session with its own transcript; return the child result as tool output, then let the parent profile answer.
 
 ```swift
 import FoundationModels
 
 @available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
-func requireToolUse() -> GenerationOptions {
-    GenerationOptions(
-        samplingMode: .greedy,
-        maximumResponseTokens: 120,
-        toolCallingMode: .required
-    )
+extension SessionPropertyValues {
+    @SessionPropertyEntry
+    var activeCraftMode: String = "brainstorm"
+}
+
+@Generable
+struct HandoffArguments {
+    let reason: String
+}
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+struct BatonPassTool: Tool {
+    let name = "switch_to_tutorial"
+    let description = "Use when the user has chosen a project and needs tutorial instructions."
+    @SessionProperty(\.activeCraftMode) private var activeCraftMode
+
+    func call(arguments: HandoffArguments) async throws -> String {
+        activeCraftMode = "tutorial"
+        return "Tutorial profile activated: \(arguments.reason)"
+    }
+}
+
+@Generable
+struct TitleArguments {
+    let concept: String
+}
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+struct TitleProfile: LanguageModelSession.DynamicProfile {
+    var body: some LanguageModelSession.DynamicProfile {
+        LanguageModelSession.Profile {
+            Instructions("Generate one short craft project title.")
+        }
+        .temperature(0.8)
+    }
+}
+
+struct ModelUnavailable: Error {}
+
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
+struct PhoneFriendTool: Tool {
+    let name = "generate_title"
+    let description = "Consults a short-lived title-writing profile for one craft concept."
+
+    func call(arguments: TitleArguments) async throws -> String {
+        guard case .available = SystemLanguageModel.default.availability else {
+            throw ModelUnavailable()
+        }
+        let child = LanguageModelSession(profile: TitleProfile())
+        let response = try await child.respond(to: Prompt(arguments.concept))
+        return response.content
+    }
 }
 ```

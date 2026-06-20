@@ -81,23 +81,26 @@ If you exceed this limit, the framework throws `LanguageModelSession.GenerationE
 
 ## WWDC 2026 Beta Updates
 
-WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+WWDC 2026 Beta: APIs require Xcode 27 beta and iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Always guard usage with `@available` or `#available` and verify against current Apple documentation before shipping.
 
 Sources:
 - https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel
 - https://developer.apple.com/documentation/foundationmodels/privatecloudcomputelanguagemodel
 - https://developer.apple.com/documentation/foundationmodels/languagemodelsession
+- Apple WWDC 2026 session: Build agentic app experiences with the Foundation Models framework
 
 - Use `SystemLanguageModel.contextSize` and `try await PrivateCloudComputeLanguageModel.contextSize`; do not hardcode context size for beta APIs.
 - Use `SystemLanguageModel.tokenCount(for:)` to budget prompts, instructions, tools, schemas, and transcript entries before generation.
 - `LanguageModelSession.usage` and response/stream `usage` expose input, cached input, output, reasoning token counts, and metadata.
 - Private Cloud Compute may have a different context size from the on-device model.
 - For custom providers, send usage events through `LanguageModelExecutorGenerationChannel` when underlying token counters are available.
+- Transcript rewrites can invalidate KV cache. Appending preserves cache best; removing entries, changing tools, or changing instructions may increase first-token latency.
+- Use the Foundation Models Instrument in Xcode and eval sets to measure transcript-engineering changes; do not assume a trim/summarize strategy improves accuracy or latency.
 
 ```swift
 import FoundationModels
 
-@available(iOS 27.0, macOS 27.0, visionOS 27.0, *)
+@available(iOS 27.0, macOS 27.0, visionOS 27.0, watchOS 27.0, *)
 actor BudgetGate {
     private let model = SystemLanguageModel.default
 

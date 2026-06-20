@@ -1,6 +1,6 @@
 ---
 name: apple-foundation-models-skill
-description: Write, review, or integrate Apple's FoundationModels framework (iOS 26.0+, macOS 26.0+), including WWDC 2026 beta APIs. Use for on-device generation, structured output, tool calling, streaming, prompt attachments, dynamic profiles, session properties, Private Cloud Compute, or custom language model providers.
+description: Write, review, or integrate Apple's FoundationModels framework (iOS 26.0+, macOS 26.0+), including WWDC 2026 beta APIs. Use for on-device generation, structured output, tool calling, streaming, prompt attachments, dynamic profiles, agentic orchestration, session properties, Private Cloud Compute, or custom language model providers.
 ---
 
 # Apple Foundation Models Skill
@@ -14,7 +14,7 @@ description: Write, review, or integrate Apple's FoundationModels framework (iOS
 - Prefer `@Generable` for structured output instead of asking the model to write raw JSON.
 - Never use the model for real-time data retrieval without injecting `Tool` capabilities, and avoid using it for complex mathematical reasoning or authoritative world-knowledge.
 - Focus on hardware performance: use `prewarm()` intelligently during idle time to minimize first-token latency.
-- Treat WWDC 2026 beta APIs as provisional: verify against Apple documentation before use, add platform availability guards, and load `references/wwdc-2026-beta-apis.md` before beta-specific files.
+- Treat WWDC 2026 beta APIs as provisional: require Xcode 27 beta, add `@available` / `#available` guards for iOS 27.0, macOS 27.0, visionOS 27.0, and watchOS 27.0 beta, verify against Apple documentation, and load `references/wwdc-2026-beta-apis.md` before beta-specific files.
 - Load references progressively: start with `references/_index.md`, then load only the topic files needed for the request. For beta work, load the beta API map first and then the single beta reference that matches the task.
 
 ## Task Workflow
@@ -55,7 +55,7 @@ Consult the reference file for each topic relevant to the current task:
 | Prompt Design & Iteration | `references/prompting-techniques.md` |
 | WWDC 2026 Beta API Map | `references/wwdc-2026-beta-apis.md` |
 | Prompt Attachments & Image References | `references/prompt-attachments.md` |
-| Dynamic Instructions & Profiles | `references/dynamic-profiles.md` |
+| Dynamic Instructions, Profiles & Agentic Patterns | `references/dynamic-profiles.md` |
 | Session Properties | `references/session-properties.md` |
 | Private Cloud Compute Model | `references/private-cloud-compute.md` |
 | Custom Language Model Providers | `references/custom-language-model-provider.md` |

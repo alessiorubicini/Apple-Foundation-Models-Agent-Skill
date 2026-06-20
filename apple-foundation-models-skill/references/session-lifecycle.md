@@ -180,12 +180,13 @@ Never retry the same session after `.exceededContextWindowSize` — the transcri
 
 ## WWDC 2026 Beta Updates
 
-WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+WWDC 2026 Beta: APIs require Xcode 27 beta and iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Always guard usage with `@available` or `#available` and verify against current Apple documentation before shipping.
 
 Sources:
 - https://developer.apple.com/documentation/foundationmodels/languagemodelsession
 - https://developer.apple.com/documentation/foundationmodels/dynamicinstructions
 - https://developer.apple.com/documentation/foundationmodels/transcripterrorhandlingpolicy
+- Apple WWDC 2026 session: Build agentic app experiences with the Foundation Models framework
 
 - Sessions can be initialized with any `LanguageModel`, including `PrivateCloudComputeLanguageModel` and custom providers.
 - `init(profile:history:)` creates a session from a `DynamicProfile`.
@@ -193,6 +194,8 @@ Sources:
 - `properties` exposes `SessionPropertyValues` for dynamic instructions, tools, and profiles.
 - `transcriptErrorHandlingPolicy` controls whether failed requests preserve or revert transcript mutations.
 - Response and stream overloads accept `contextOptions` and `metadata`.
+- `transcript` is mutable in beta; mutate it only when `session.isResponding == false`.
+- With `.preserveTranscript`, failed or canceled responses can leave partial transcript state. Normalize or roll back manually before reusing the session.
 
 ```swift
 import FoundationModels

@@ -19,7 +19,7 @@ Canonical terminology used across this skill. Prefer these definitions when writ
 
 ## WWDC 2026 Beta Terms
 
-WWDC 2026 Beta: APIs require iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Verify against current Apple documentation before shipping.
+WWDC 2026 Beta: APIs require Xcode 27 beta and iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless noted. Always guard usage with `@available` or `#available` and verify against current Apple documentation before shipping.
 
 | Term | Definition |
 |------|------------|
