@@ -2,7 +2,6 @@
 
 Source: `FoundationModels` framework, iOS 26.0+
 
----
 
 ## Core Concept
 
@@ -58,14 +57,12 @@ The maximum number of tokens the model is allowed to produce in its response.
 * Use this to prevent the model from generating overly long responses that consume unnecessary memory and processing time.
 * **Warning**: This limit does not override the hard **4 096 tokens** combined input + output budget. If your session exceeds the available context size, it throws `LanguageModelSession.GenerationError.exceededContextWindowSize`.
 
----
 
 ## Best Practices & Invariants
 
 * **Extraction vs. Creation**: When using the `.contentTagging` use-case adapter or strict `@Generable` types, prefer `.greedy` sampling to enforce structural constraints. For free-form text using the `.default` model, moderate temperatures allow for more natural phrasing.
 * **Context Preservation**: Always remember that the combined transcript size is capped at **4 096 tokens**. Limit `maximumResponseTokens` if you need to reserve space in the transcript for future multi-turn interactions.
 
----
 
 ## WWDC 2026 Beta Updates
 

@@ -2,7 +2,6 @@
 
 Source: `FoundationModels` framework, iOS 26.0+
 
----
 
 ## Core Concept
 
@@ -10,7 +9,6 @@ For a responsive user experience, particularly with long responses, you should s
 
 Streaming supports both plain text generation and structured output via `@Generable`.
 
----
 
 ## Text Streaming
 
@@ -47,7 +45,6 @@ final class ChatViewModel {
 }
 ```
 
----
 
 ## Guided Generation Streaming (Structured Output)
 
@@ -124,7 +121,6 @@ final class ItineraryViewModel {
 }
 ```
 
----
 
 ## Best Practices & Correctness Invariants
 
@@ -133,7 +129,6 @@ final class ItineraryViewModel {
 3. **Actor Isolation**: Ensure that the `for try await` loop consuming the stream updates UI state safely on the `@MainActor`. 
 4. **Context Window**: Just like `respond(to:)`, streaming adds to the session's transcript. You must explicitly catch `LanguageModelSession.GenerationError.exceededContextWindowSize` during streaming. If thrown, create a fresh session; do not retry the same session.
 
----
 
 ## WWDC 2026 Beta Updates
 

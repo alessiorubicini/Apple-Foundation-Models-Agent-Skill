@@ -3,7 +3,6 @@
 
 Source: `FoundationModels` framework, iOS 26.0+
 
----
 
 ## Core Architecture & Hardware Footprint
 
@@ -17,7 +16,6 @@ Understanding the physical constraints of the on-device model is critical for bu
 * **Execution Context**: The model runs via an OS Daemon (Apple Intelligence Daemon) utilizing the Neural Engine, GPU, and CPU dynamically.
 * **App Lifecycle**: The model is automatically paused and unloaded by the OS when your app goes into the background to preserve system resources.
 
----
 
 ## Latency & Prewarming
 
@@ -61,7 +59,6 @@ struct MagicComposeView: View {
 }
 ```
 
----
 
 ## The 4 096 Token Budget
 
@@ -77,7 +74,6 @@ If you exceed this limit, the framework throws `LanguageModelSession.GenerationE
 4.  **Limit Tools**: Every `Tool` you provide adds its description and `Arguments` schema to the context window. Only inject tools that are strictly necessary for the current task.
 5.  **Restart Sessions Proactively**: If building a long-running chat UI, monitor the conversation length and proactively summarize the transcript to start a fresh `LanguageModelSession` before hitting the overflow error.
 
----
 
 ## WWDC 2026 Beta Updates
 

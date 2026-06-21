@@ -3,7 +3,6 @@
 Source: `FoundationModels` framework, iOS 26.0+  
 Reference: [Foundation Models Prompting Guide](https://livsycode.com/best-practices/foundation-models-prompting-guide)
 
----
 
 ## Why On-Device Prompting Is Different
 
@@ -20,7 +19,6 @@ Server-side LLMs tolerate verbose, loosely structured prompts because they opera
 - Use example-based prompting (zero-shot, one-shot, few-shot) to anchor format and behavior.
 - Test prompts across real-world inputs — treat prompt quality like any other user-facing feature.
 
----
 
 ## Keep Prompts Simple and Clear
 
@@ -56,7 +54,6 @@ let instructions = """
 
 When prompts get longer, the model spends tokens interpreting setup. The task sentence becomes harder to spot. Clarity improves both results and token efficiency.
 
----
 
 ## Role, Persona, and Tone
 
@@ -116,7 +113,6 @@ let session = LanguageModelSession {
 }
 ```
 
----
 
 ## Iterating to Improve Instruction Following
 
@@ -151,7 +147,6 @@ let session = LanguageModelSession {
 
 If the baseline is unstable, the task may not fit the model's capabilities or input distribution.
 
----
 
 ## Reducing Reasoning Burden
 
@@ -196,7 +191,6 @@ let reply = try await responseSession.respond(to: facts.content)
 
 This pattern also makes debugging easier — you can see where drift starts.
 
----
 
 ## Moving Conditionals into Code
 
@@ -248,7 +242,6 @@ let session = LanguageModelSession {
 
 This keeps irrelevant condition branches out of the context window.
 
----
 
 ## Few-Shot Prompting
 
@@ -270,7 +263,6 @@ let session = LanguageModelSession {
 
 Combine few-shot examples with `@Generable` for strict schema enforcement on top of stylistic anchoring — see `guided-generation.md`.
 
----
 
 ## Reasoning Fields in Structured Output
 
@@ -308,7 +300,6 @@ let response = try await session.respond(
 
 This does not guarantee perfect reasoning. It gives the model a safe place to put it, protecting the shape of your output.
 
----
 
 ## Quick-Reference Checklist
 

@@ -2,7 +2,6 @@
 
 Source: `FoundationModels` framework, iOS 26.0+
 
----
 
 ## Core Concept
 

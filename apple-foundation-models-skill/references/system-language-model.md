@@ -3,7 +3,6 @@
 Source: `FoundationModels` framework, iOS 26.0+  
 WWDC25: [Meet the Foundation Models framework](https://developer.apple.com/videos/play/wwdc2025/286/)
 
----
 
 ## Access Points
 
@@ -19,7 +18,6 @@ let tagger = SystemLanguageModel(useCase: .contentTagging)
 
 `SystemLanguageModel.default` powers all general text tasks (Q&A, summarization, content generation, game dialog). The `.contentTagging` adapter is fine-tuned for topic extraction, entity detection, and classification — its output is structurally different from the default model.
 
----
 
 ## Availability
 
@@ -45,7 +43,6 @@ case .unavailable(let reason):
 
 **Rule**: Never create a `LanguageModelSession` without an `.available` guard. Doing so throws at runtime.
 
----
 
 ## Supported Devices (as of iOS 26.0)
 
@@ -58,7 +55,6 @@ case .unavailable(let reason):
 Minimum OS: iOS 26.0, macOS 26.0 (Tahoe), visionOS 3.0.  
 Apple Intelligence must be enabled in **Settings > Apple Intelligence & Siri**.
 
----
 
 ## Supported Languages
 
@@ -72,7 +68,6 @@ guard supported.contains(Locale.current.language) else {
 }
 ```
 
----
 
 ## Use-Case Adapters
 
@@ -83,7 +78,6 @@ guard supported.contains(Locale.current.language) else {
 
 Do not use `.contentTagging` for free-form generation — it produces structured, terse outputs optimized for extraction, not prose.
 
----
 
 ## What the Model Is NOT For
 
@@ -93,7 +87,6 @@ Apple explicitly warns against these use cases:
 - Authoritative world-knowledge retrieval (model is not a web search)
 - Real-time data (use `Tool` calling to inject live data)
 
----
 
 ## WWDC 2026 Beta Updates
 

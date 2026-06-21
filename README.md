@@ -4,8 +4,6 @@
 [![GitHub Release](https://img.shields.io/github/v/release/alessiorubicini/Apple-Foundation-Models-Agent-Skill)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/alessiorubicini/Apple-Foundation-Models-Agent-Skill?style=flat)](https://github.com/alessiorubicini/Apple-Foundation-Models-Agent-Skill/stargazers)
 
-**Current version:** 2.0.0
-
 > **Beta warning:** Stable guidance targets the iOS 26+ and macOS 26+ `FoundationModels` framework. WWDC26 additions are beta-only and require Xcode 27 beta plus iOS 27.0 / macOS 27.0 / visionOS 27.0 / watchOS 27.0 beta unless explicitly noted. Treat beta APIs as provisional, guard generated Swift with `@available` or `#available`, and verify behavior with [Apple's Foundation Models documentation](https://developer.apple.com/documentation/foundationmodels) and your target SDK before shipping.
 
 Expert guidance for any AI coding assistant that supports the [Agent Skills open format](https://agentskills.io/home), unlocking the power of Apple's generative AI through the `FoundationModels` framework, including stable OS 26 APIs and WWDC26 OS 27 beta APIs.
@@ -116,7 +114,7 @@ apple-foundation-models-skill/
 ```
 ## Contributing
 
-Contributions, fixes, and improvements are highly encouraged! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide: the content contract in [AGENTS.md](AGENTS.md), which files to edit, the pull request checklist, and how to refresh documentation after new OS or Xcode releases.
+Contributions, fixes, and improvements are highly encouraged! See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide: the content contract in [AGENTS.md](AGENTS.md), which files to edit, the pull request checklist, and how to refresh documentation after new OS or Xcode releases.
 
 This repository adheres strictly to the [Agent Skills open format](https://agentskills.io/home), which dictates specific structural constraints to remain machine-readable.
 

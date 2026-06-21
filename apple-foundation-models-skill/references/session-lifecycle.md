@@ -3,7 +3,6 @@
 Source: `FoundationModels` framework, iOS 26.0+  
 WWDC25: [Deep Dive into the Foundation Models Framework](https://developer.apple.com/videos/play/wwdc2025/301/)
 
----
 
 ## Initializer
 
@@ -34,7 +33,6 @@ let session = LanguageModelSession(
 | `tools` | `[any Tool]` | `[]` | Model decides when to invoke tools |
 | `instructions` | `@InstructionsBuilder` closure | none | System prompt; set once per session |
 
----
 
 ## Instructions
 
@@ -52,7 +50,6 @@ let session = LanguageModelSession {
 
 **Security**: Never build instructions from user-provided text. Instructions are injection-sensitive — keep them developer-controlled. Separate user input from developer instructions using the `Prompt` builder (see `guided-generation.md`).
 
----
 
 ## Session Statefulness
 
@@ -79,7 +76,6 @@ for entry in session.transcript {
 }
 ```
 
----
 
 ## `isResponding`
 
@@ -89,7 +85,6 @@ Button("Send") { Task { await viewModel.send() } }
     .disabled(session.isResponding)
 ```
 
----
 
 ## Prewarming
 
@@ -105,7 +100,6 @@ Loads the model into memory without generating a response. Call during idle time
 
 Do **not** call `prewarm()` immediately before `respond()` in the same task — it provides no benefit if generation follows immediately.
 
----
 
 ## Session Ownership Patterns
 
@@ -158,7 +152,6 @@ actor AIEngine {
 }
 ```
 
----
 
 ## Context Overflow Recovery
 
@@ -176,7 +169,6 @@ do {
 
 Never retry the same session after `.exceededContextWindowSize` — the transcript is permanently full.
 
----
 
 ## WWDC 2026 Beta Updates
 

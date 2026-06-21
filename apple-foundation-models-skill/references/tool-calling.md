@@ -2,7 +2,6 @@
 
 Source: `FoundationModels` framework, iOS 26.0+
 
----
 
 ## Core Concept
 
@@ -22,7 +21,6 @@ To create a tool, define a `Sendable` type conforming to `Tool` with `name`, `de
 * **`Arguments`**: A nested type that defines the parameters the model will pass to the tool. It must be a `struct` or `enum` marked with `@Generable`.
 * **`call(arguments:)`**: The actual asynchronous work. `Tool.call(arguments:)` is `async throws`. Propagate errors; never silence failures.
 
----
 
 ## Example: Building a Tool
 
@@ -54,19 +52,16 @@ struct WeatherTool: Tool {
 }
 ```
 
----
 
 ## Providing Tools to a Session
 
 Tools are injected when initializing `LanguageModelSession` or through `DynamicInstructions` / `Profile` builders. The model decides when to invoke tools unless beta `toolCallingMode` overrides that behavior.
 
----
 
 ## Observing Execution: `ToolExecutionDelegate`
 
 Assign a `ToolExecutionDelegate` when UI needs progress state for tool execution. Keep delegate work short and actor-safe.
 
----
 
 ## Best Practices & Invariants
 
@@ -75,7 +70,6 @@ Assign a `ToolExecutionDelegate` when UI needs progress state for tool execution
 * **Arguments Constraints**: Use `@Guide` on your `@Generable` properties to constrain output at the token level. Match the property type: `String` → `.regex` or `description:`, enum → `.anyOf(cases)`.
 * **Error Propagation**: Always propagate errors from `Tool.call`. The framework handles the failure gracefully, often allowing the model to inform the user it couldn't retrieve the data rather than crashing. Do not use optional-try to silence failures.
 
----
 
 ## WWDC 2026 Beta Updates
 

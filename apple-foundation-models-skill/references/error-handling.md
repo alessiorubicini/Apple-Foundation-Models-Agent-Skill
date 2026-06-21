@@ -2,7 +2,6 @@
 
 Source: `FoundationModels` framework, iOS 26.0+
 
----
 
 ## Core Concept
 
@@ -10,7 +9,6 @@ Interacting with on-device AI involves non-deterministic execution, token limits
 
 
 
----
 
 ## Pre-Session: Availability Gate
 
@@ -40,7 +38,6 @@ case .unavailable(let reason):
 }
 ```
 
----
 
 ## Catching `GenerationError`
 
@@ -94,7 +91,6 @@ guard supported.contains(Locale.current.language) else {
 }
 ```
 
----
 
 ## Tool Calling Errors
 
@@ -118,7 +114,6 @@ struct NetworkDataTool: Tool {
 }
 ```
 
----
 
 ## WWDC 2026 Beta Updates
 

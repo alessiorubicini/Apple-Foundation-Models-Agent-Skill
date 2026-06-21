@@ -3,13 +3,11 @@
 Source: `FoundationModels` framework, iOS 26.0+  
 WWDC25: [Deep Dive into the Foundation Models Framework](https://developer.apple.com/videos/play/wwdc2025/301/)
 
----
 
 ## Core Concept
 
 Guided generation constrains the model's output at the **token level** to match a Swift type. The model is structurally forced to produce valid instances — no JSON parsing, no validation retry logic required.
 
----
 
 ## @Generable
 
@@ -47,7 +45,6 @@ Apply to `struct` or `enum`. All nested types must also be `@Generable`.
 - **Property order matters**: the model generates properties top-to-bottom. Place properties that depend on earlier values (e.g., summaries) **last**.
 - `@Generable` enums do not require `@Generable` on associated value types if they are primitive (`String`, `Int`, `Bool`, `Double`). For custom associated types, they must also be `@Generable`.
 
----
 
 ## @Guide
 
@@ -78,7 +75,6 @@ Provides hints or constraints for individual properties.
 | `.count(n)` | Fix array length to exactly `n` elements |
 | `.regex(pattern)` | Constrain `String` output to match a regex pattern |
 
----
 
 ## Calling respond with a Generable Type
 
@@ -101,7 +97,6 @@ let response = try await session.respond(
 
 `includeSchemaInPrompt: false` saves tokens when the schema is already described in the session instructions.
 
----
 
 ## DynamicGenerationSchema
 
@@ -130,7 +125,6 @@ let response = try await session.respond(to: prompt, schema: schema)
 
 Use `DynamicGenerationSchema` when schema varies per user configuration or plugin system. For fixed structures, prefer `@Generable` — it is faster, more readable, and compile-time safe.
 
----
 
 ## PartiallyGenerated
 
@@ -147,7 +141,6 @@ for try await partial in stream {
 }
 ```
 
----
 
 ## Macro Expansion (Informational)
 
